@@ -1,0 +1,105 @@
+{% extends 'default.html' %}
+
+{% load custom_tags %}
+
+{% block title %}
+All news
+{% endblock title %}
+
+{% block content %}
+<h2>Страница авторизованного пользователя {{request.user.username}}</h2>
+<div> Здесь может содержаться персональная информация для каждого пользователя </div>
+<br>
+{% if is_not_premium %}
+<button> <a href="sign/upgrade/"> Подписаться на новости</a> </button>
+{% endif %}
+<br>
+<p><button> <a href="sign/logout/">Выйти</a> </button></p>
+
+        <div class="col-lg-7">
+
+            <a class="text-white opacity-75-onHover" href="/">Вернуться к списку всех откликов на обьявлени.я</a>
+
+        {% if reply_list %}
+             <div class="card post-item bg-transparent border-0 mb-5">
+                <div class="card-body px-0">
+                    <h3 class="text-white opacity-75-onHover">Отклики на обьявление:</h3>
+                    <h2 class="card-title">
+                        <a class="text-white opacity-75-onHover" href="/protect/filter/{{ post.id }}">{{ post.title }}</a>
+                    </h2>
+                    {% for reply in reply_list %}
+                    <ul class="post-meta mt-3">
+                        <li class="d-inline-block mr-3">
+                            <span class="fas fa-clock text-primary"></span>
+                            <a class="ml-1" href="#">{{ reply.date_time_in | date:'d M Y' }}</a>
+                        </li>
+                        <li class="d-inline-block">
+                            <span class="fas fa-list-alt text-primary"></span>
+                            <a class="ml-1" href="#">{{ reply.post.category }}</a>
+                        </li>
+                        <li class="d-inline-block">
+                            <span class="fas fa-list-alt text-primary"></span>
+                            <a class="ml-1" href="#">{{ reply.user.username }}</a>
+                        </li>
+                        <li class="d-inline-block">
+                            <span class="fas fa-list-alt text-primary"></span>
+                            <a class="ml-1" href="/protect/reply/{{ reply.id }}/delete">Удалить отклик</a>
+                        </li>
+                        {% if reply.accepted == False %}
+                        <li class="d-inline-block">
+                            <span class="fas fa-list-alt text-primary"></span>
+                            <a class="ml-1" href="/protect/reply/{{ reply.id }}/accept">Принять отклик</a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                    <p class="card-text my-4">{{  reply.reply }}</p>
+                </div>
+            </div>
+                    {% endfor %}
+        {% else %}
+
+            <div class="card post-item bg-transparent border-0 mb-5">
+                <div class="card-body px-0">
+                    <h3 class="text-white opacity-75-onHover">Откликов нет</h3>
+                    <h2 class="card-title">
+                        <a class="text-white opacity-75-onHover" href="">{{ post.title }}</a>
+                    </h2>
+                </div>
+            </div>
+        {% endif %}
+
+
+
+            <div class="card post-item bg-transparent border-0 mb-5">
+                <div class="card-body px-0">
+                     <ul class="post-meta mt-3">
+                        <li class="d-inline-block mr-3">
+                            <span class="fas text-primary"></span>
+
+
+                        {% if page_obj.has_previous %}
+
+                            <a class="ml-1" href="?{% url_replace page=1 %}">1</a>
+                            {% if page_obj.previous_page_number != 1 %}
+                            ...
+                            <a class="ml-1" href="?{% url_replace page=page_obj.previous_page_number %}">{{ page_obj.previous_page_number }}</a>
+                            {% endif %}
+                        {% endif %}
+
+                        {{ page_obj.number }}
+
+                       {% if page_obj.has_next %}
+                           <a class="ml-1" href="?{% url_replace page=page_obj.next_page_number %}">{{ page_obj.next_page_number }}</a>
+                           {% if paginator.num_pages != page_obj.next_page_number %}
+                               ...
+                               <a class="ml-1" href="?{% url_replace page=page_obj.paginator.num_pages %}">{{ page_obj.paginator.num_pages }}</a>
+                           {% endif %}
+                       {% endif %}
+                         </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+
+{% endblock %}

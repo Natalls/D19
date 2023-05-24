@@ -1,0 +1,27 @@
+{% extends 'flatpages/default.html' %}
+
+{% block content %}
+{% if user.is_authenticated %}
+    <a href="{% url 'logout' %}" style="float:right;"><button>Выйти</button></a>
+{% else %}
+    <a href="{% url 'login' %}" style="float:right;"><button>Войти</button></a>
+{% endif %}
+{% if reply_list %}
+    {% for reply in reply_list %}
+        {% if reply.status == 'A' or reply.status is None %}
+            <p>{{ reply.reply_time|date:'d.m.y' }}</p>
+            <p>{{ reply.reply_text }}</p>
+            <p>Отклик на "{{ reply.post.title }}" от пользователя {{ reply.user }}</p>
+                {% if reply.status == 'A' %}
+                    <p>{{ reply.get_status_display }}</p>
+                {% else %}
+                    <a href="{% url 'accept' pk=reply.pk %}"><button>Принять</button></a>
+                    <a href="{% url 'deny' pk=reply.pk %}"><button>Отклонить</button></a>
+                {% endif %}
+            <hr>
+        {% endif %}
+    {% endfor %}
+{% else %}
+    Откликов нет
+{% endif %}
+{% endblock content %}

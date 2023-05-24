@@ -1,0 +1,17 @@
+{% extends 'flatpages/default.html' %}
+
+{% block content %}
+{{ reply.reply_time|date:'d.m.y' }}
+<hr>
+{{ reply.reply_text }}
+<hr>
+Отправил: {{ reply.user }}<br>
+{% if reply.status == 'A' or reply.status is None %}
+    {% if reply.status == 'A' %}
+        <p>{{ reply.get_status_display }}</p>
+    {% else %}
+        <a href="{% url 'accept' pk=reply.pk %}"><button>Принять</button></a>
+        <a href="{% url 'deny' pk=reply.pk %}"><button>Отклонить</button></a>
+    {% endif %}
+{% endif %}
+{% endblock content %}
